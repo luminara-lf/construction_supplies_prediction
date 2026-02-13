@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from datetime import date, datetime, timedelta, timezone
-import json
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import RequestContext, get_request_context, require_roles
 from app.database import get_db, init_db
-from app.models import Alert, AlertFeedback, OrderLine, RiskAssessment, SupplierConnector, SupplierInventorySnapshot
+from app.models import Alert, AlertFeedback, OrderLine, RiskAssessment, SupplierConnector
 from app.schemas import (
     AlertActionResponse,
     AlertFeedbackRequest,
@@ -36,18 +36,20 @@ from app.services.suppliers import SUPPORTED_SUPPLIERS, supplier_supported
 from app.services.sync import run_sync
 
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    init_db()
+    yield
+
+
 app = FastAPI(
     title="Build Sight MVP API",
     description="Construction material delay early warning and recovery hub.",
     version="0.1.0",
+    lifespan=lifespan,
 )
 app.mount("/static", StaticFiles(directory="/workspace/app/static"), name="static")
 templates = Jinja2Templates(directory="/workspace/app/templates")
-
-
-@app.on_event("startup")
-def startup() -> None:
-    init_db()
 
 
 def _utcnow() -> datetime:
@@ -56,22 +58,6 @@ def _utcnow() -> datetime:
 
 def _mask_secret(_: str) -> str:
     return f"secret://{uuid4()}"
-
-
-def _latest_inventory_qty(db: Session, connector_id: str, sku: str, tenant_id: str) -> float:
-    row = db.execute(
-        select(SupplierInventorySnapshot)
-        .where(
-            and_(
-                SupplierInventorySnapshot.connector_id == connector_id,
-                SupplierInventorySnapshot.supplier_sku == sku,
-                SupplierInventorySnapshot.tenant_id == tenant_id,
-            )
-        )
-        .order_by(desc(SupplierInventorySnapshot.captured_at))
-        .limit(1)
-    ).scalar_one_or_none()
-    return row.qty_available if row else 0.0
 
 
 def _latest_risk_for_order(db: Session, order_line_id: str) -> RiskAssessment | None:
