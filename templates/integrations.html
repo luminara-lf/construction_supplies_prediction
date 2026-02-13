@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Integrations</h2>
+
+<section class="panel">
+  <h3>Add Supplier Connector</h3>
+  <form id="connector-form">
+    <label>Supplier
+      <select name="supplierName">
+        <option value="MetroLumber">MetroLumber</option>
+        <option value="BuildPro">BuildPro</option>
+        <option value="ConcreteNow">ConcreteNow</option>
+        <option value="SteelHub">SteelHub</option>
+        <option value="RapidRoof">RapidRoof</option>
+      </select>
+    </label>
+    <label>API Key <input type="text" name="apiKey" required /></label>
+    <label>Poll Interval (minutes) <input type="number" name="pollIntervalMinutes" min="120" max="1440" value="1440" /></label>
+    <button type="submit">Create Connector</button>
+  </form>
+  <p id="connector-feedback"></p>
+</section>
+
+<section class="panel">
+  <h3>Configured Connectors</h3>
+  {% if connectors %}
+  <table>
+    <thead>
+      <tr>
+        <th>Supplier</th>
+        <th>Status</th>
+        <th>Last Sync</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for connector in connectors %}
+      <tr>
+        <td>{{ connector.supplier_name }}</td>
+        <td>{{ connector.status }}</td>
+        <td>{{ connector.last_sync_at or "Never" }}</td>
+        <td><button onclick="runSync('{{ connector.id }}')">Run Sync</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No connectors configured.</p>
+  {% endif %}
+</section>
+
+<script>
+  const feedback = document.getElementById("connector-feedback");
+  document.getElementById("connector-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const payload = {
+      supplierName: form.supplierName.value,
+      authType: "api_key",
+      credentials: { apiKey: form.apiKey.value },
+      pollIntervalMinutes: Number(form.pollIntervalMinutes.value)
+    };
+    const res = await fetch("/api/integrations/suppliers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      feedback.textContent = "Connector created successfully.";
+      window.location.reload();
+    } else {
+      const err = await res.json();
+      feedback.textContent = `Error: ${err.detail}`;
+    }
+  });
+
+  async function runSync(connectorId) {
+    const res = await fetch("/api/sync/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ connectorId, mode: "incremental" })
+    });
+    if (res.ok) {
+      feedback.textContent = "Sync queued successfully.";
+    } else {
+      const err = await res.json();
+      feedback.textContent = `Sync failed: ${err.detail}`;
+    }
+  }
+</script>
+{% endblock %}
+

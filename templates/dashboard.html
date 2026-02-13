@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Material Delay Early Warning Hub</h2>
+<section class="cards">
+  <div class="card green">Green <strong>{{ counts.green }}</strong></div>
+  <div class="card yellow">Yellow <strong>{{ counts.yellow }}</strong></div>
+  <div class="card red">Red <strong>{{ counts.red }}</strong></div>
+</section>
+
+<section class="panel">
+  <h3>Connector Health</h3>
+  {% if connectors %}
+  <table>
+    <thead>
+      <tr>
+        <th>Supplier</th>
+        <th>Status</th>
+        <th>Last Sync</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for connector in connectors %}
+      <tr>
+        <td>{{ connector.supplier_name }}</td>
+        <td>{{ connector.status }}</td>
+        <td>{{ connector.last_sync_at or "Never" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No connectors configured yet.</p>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h3>Open Orders Risk Table</h3>
+  {% if rows %}
+  <table>
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>SKU</th>
+        <th>Status</th>
+        <th>Risk</th>
+        <th>Confidence</th>
+        <th>Impact Date</th>
+        <th>Reason Codes</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td>{{ row.supplier_order_id }}</td>
+        <td>{{ row.supplier_sku }}</td>
+        <td><span class="status {{ row.status }}">{{ row.status|upper }}</span></td>
+        <td>{{ "%.2f"|format(row.risk_score) }}</td>
+        <td>{{ "%.2f"|format(row.confidence) }}</td>
+        <td>{{ row.impact_date or "-" }}</td>
+        <td>{{ row.reason_codes }}</td>
+        <td><a href="/orders/{{ row.id }}">Review Alert</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No scored open orders yet. Run sync to ingest supplier data.</p>
+  {% endif %}
+</section>
+{% endblock %}
+

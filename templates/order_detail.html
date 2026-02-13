@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Order Detail</h2>
+{% if order %}
+<section class="panel">
+  <p><strong>Order:</strong> {{ order.supplier_order_id }}</p>
+  <p><strong>SKU:</strong> {{ order.supplier_sku }}</p>
+  <p><strong>Quantity:</strong> {{ order.qty_delivered }} / {{ order.qty_ordered }} delivered</p>
+  <p><strong>ETA:</strong> {{ order.eta_date or "-" }}</p>
+  <p><strong>Impact Date:</strong> {{ order.impact_date or "-" }}</p>
+</section>
+
+<section class="panel">
+  <h3>Risk Timeline</h3>
+  {% if risk_history %}
+  <table>
+    <thead>
+      <tr>
+        <th>Assessed At</th>
+        <th>Status</th>
+        <th>Score</th>
+        <th>Reason Codes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for risk in risk_history %}
+      <tr>
+        <td>{{ risk.assessed_at }}</td>
+        <td>{{ risk.risk_status }}</td>
+        <td>{{ "%.2f"|format(risk.risk_score) }}</td>
+        <td>{{ risk.reason_codes_json }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No risk history available.</p>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h3>Alerts</h3>
+  {% if alerts %}
+  <ul>
+    {% for alert in alerts %}
+    <li>{{ alert.created_at }} - {{ alert.message }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">No alerts generated for this order.</p>
+  {% endif %}
+</section>
+{% else %}
+<p class="empty">Order not found.</p>
+{% endif %}
+{% endblock %}
+
