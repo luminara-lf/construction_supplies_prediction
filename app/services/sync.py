@@ -255,6 +255,8 @@ def _run_single_attempt(db: Session, connector: models.SupplierConnector, mode: 
     payload = _mock_supplier_payload(connector)
     _upsert_inventory(db, connector, payload)
     order_lines = _upsert_orders(db, connector, payload)
+    # Ensure newly inserted order lines have primary keys before scoring/alerting.
+    db.flush()
     impacted = _apply_scoring_and_alerts(db, order_lines)
     connector.status = "healthy"
     connector.last_sync_at = utcnow()
