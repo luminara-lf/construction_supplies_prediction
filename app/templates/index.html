@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Build Sight MVP</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Build Sight — Material Delay Intelligence</h1>
+      <p>Catch supply delays before your supplier calls.</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <h2>1) Connect Supplier</h2>
+        <form id="connector-form">
+          <label>
+            Supplier
+            <select id="supplier-name" required>
+              {% for supplier in supported_suppliers %}
+              <option value="{{ supplier }}">{{ supplier }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>
+            API Key
+            <input id="api-key" type="password" required placeholder="demo-key" />
+          </label>
+          <button type="submit">Create Connector</button>
+        </form>
+        <ul id="connectors" class="list"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>2) Dashboard Summary</h2>
+        <div class="cards">
+          <div class="card red"><span>Red</span><strong id="red-count">0</strong></div>
+          <div class="card yellow"><span>Yellow</span><strong id="yellow-count">0</strong></div>
+          <div class="card green"><span>Green</span><strong id="green-count">0</strong></div>
+          <div class="card"><span>Open Alerts</span><strong id="open-alerts">0</strong></div>
+        </div>
+        <p id="sync-health">Sync: not connected</p>
+      </section>
+
+      <section class="panel">
+        <h2>3) Run Sync</h2>
+        <label>
+          Connector
+          <select id="sync-connector"></select>
+        </label>
+        <button id="run-sync-btn">Run Incremental Sync</button>
+        <pre id="sync-output"></pre>
+      </section>
+
+      <section class="panel wide">
+        <h2>Risk-Scored Open Orders</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Project</th>
+              <th>PO</th>
+              <th>Material</th>
+              <th>ETA</th>
+              <th>Score</th>
+              <th>Reasons</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+      </section>
+
+      <section class="panel wide">
+        <h2>Alerts</h2>
+        <ul id="alerts" class="list"></ul>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
