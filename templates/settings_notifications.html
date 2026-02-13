@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Notification Settings</h2>
+<section class="panel">
+  <p>Configure how urgent risk updates are delivered.</p>
+  <pre>{{ notification_preferences }}</pre>
+  <ul>
+    <li>Email alerts enabled by default for Red risk transitions.</li>
+    <li>SMS is optional and can be toggled per tenant.</li>
+    <li>Quiet hours can be added in the next iteration.</li>
+  </ul>
+</section>
+{% endblock %}
+

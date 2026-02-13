@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Alert Center</h2>
+{% if alerts %}
+<table>
+  <thead>
+    <tr>
+      <th>Severity</th>
+      <th>Status</th>
+      <th>Message</th>
+      <th>Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for alert in alerts %}
+    <tr>
+      <td><span class="status {{ alert.severity }}">{{ alert.severity|upper }}</span></td>
+      <td>{{ alert.status }}</td>
+      <td>{{ alert.message }}</td>
+      <td>{{ alert.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No alerts yet. Alerts appear when risk transitions to Yellow/Red.</p>
+{% endif %}
+{% endblock %}
+
