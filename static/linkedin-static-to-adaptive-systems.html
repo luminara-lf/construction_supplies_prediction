@@ -171,7 +171,7 @@
       background: radial-gradient(circle, white 0%, var(--accent) 45%, rgba(125,211,252,0) 70%);
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      animation: travel-x 4.2s linear infinite;
+      animation: travel-x 5s linear infinite;
       filter: drop-shadow(0 0 10px rgba(125,211,252,0.8));
     }
 
@@ -186,14 +186,14 @@
     .caption {
       position: absolute;
       left: 50%;
-      bottom: 28px;
+      bottom: 16px;
       transform: translateX(-50%);
       padding: 14px 18px;
       border-radius: 14px;
       background: rgba(8, 12, 24, 0.7);
       border: 1px solid rgba(255,255,255,0.08);
       color: var(--text);
-      font-size: clamp(15px, 1.8vw, 20px);
+      font-size: clamp(14px, 1.6vw, 18px);
       letter-spacing: -0.02em;
       backdrop-filter: blur(10px);
       z-index: 6;
@@ -268,8 +268,8 @@
     }
 
     .outcomes {
-      left: 66%;
-      top: 58%;
+      left: 64%;
+      top: 57%;
       border-color: rgba(52,211,153,0.30);
     }
 
@@ -302,28 +302,28 @@
 
     .context-arrow {
       color: var(--accent-2);
-      left: 47.8%;
-      top: 32%;
-      width: 10%;
+      left: 48.2%;
+      top: 31%;
+      width: 9%;
       transform: rotate(90deg) scaleX(0.72);
     }
 
     .outcomes-arrow {
       color: var(--accent-3);
-      left: 53%;
-      top: 51%;
-      width: 16%;
+      left: 77.5%;
+      top: 50%;
+      width: 8%;
       background: linear-gradient(90deg, rgba(52,211,153,0.15), var(--accent-3), rgba(52,211,153,0.15));
-      transform: rotate(30deg) scaleX(0.75);
+      transform: rotate(110deg) scaleX(0.72);
     }
 
     .feedback-arrow {
       color: var(--accent-3);
       background: linear-gradient(90deg, rgba(52,211,153,0.15), var(--accent-3), rgba(52,211,153,0.15));
-      left: 74%;
-      top: 66%;
-      width: 25%;
-      transform: rotate(-149deg) scaleX(0.72);
+      left: 66%;
+      top: 63%;
+      width: 11%;
+      transform: rotate(-146deg) scaleX(0.72);
     }
 
     .feedback-arrow::after {
@@ -396,7 +396,7 @@
 
     .phase-2 .a1 .pulse,
     .phase-2 .a2 .pulse {
-      animation-duration: 3.5s;
+      animation-duration: 5.6s;
       filter: drop-shadow(0 0 6px rgba(245,158,11,0.65));
     }
 
@@ -422,17 +422,17 @@
 
     .phase-3 .context-arrow {
       opacity: 1;
-      transform: rotate(90deg) scaleX(0.92);
+      transform: rotate(90deg) scaleX(0.86);
     }
 
     .phase-3 .outcomes-arrow {
       opacity: 1;
-      transform: rotate(30deg) scaleX(0.92);
+      transform: rotate(110deg) scaleX(0.88);
     }
 
     .phase-3 .feedback-arrow {
       opacity: 1;
-      transform: rotate(-149deg) scaleX(0.95);
+      transform: rotate(-146deg) scaleX(0.9);
     }
 
     .phase-3 .noise {
@@ -490,13 +490,13 @@
       }
 
       .outcomes {
-        left: 63%;
-        top: 54%;
+        left: 61%;
+        top: 51%;
         width: 158px;
       }
 
       .caption {
-        bottom: 14px;
+        bottom: 10px;
       }
     }
   </style>
@@ -583,17 +583,17 @@
       {
         className: "phase-1",
         caption: "<strong>Most systems are designed to produce consistent outputs from known inputs.</strong>",
-        duration: 5000
+        duration: 6200
       },
       {
         className: "phase-2",
         caption: "<strong>But real-world conditions do not stay constant.</strong> Inputs change. Context shifts. Outcomes vary.",
-        duration: 6200
+        duration: 7600
       },
       {
         className: "phase-3",
         caption: "<strong>The systems that perform well are not just executing decisions.</strong> They are adjusting over time.",
-        duration: 8200
+        duration: 9800
       }
     ];
 
