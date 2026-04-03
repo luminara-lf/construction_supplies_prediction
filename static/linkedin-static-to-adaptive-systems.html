@@ -7,21 +7,16 @@
   <style>
     :root {
       --bg: #0b1020;
-      --panel: #121933;
       --text: #e8ecf8;
       --muted: #9aa6c3;
       --accent: #7dd3fc;
       --accent-2: #a78bfa;
       --accent-3: #34d399;
       --warning: #f59e0b;
-      --danger: #fb7185;
-      --line: rgba(255,255,255,0.14);
       --shadow: 0 20px 60px rgba(0,0,0,0.35);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -38,8 +33,8 @@
     }
 
     .frame {
-      width: min(1100px, 92vw);
-      height: min(640px, 88vh);
+      width: min(1120px, 94vw);
+      height: min(660px, 90vh);
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 28px;
@@ -73,14 +68,14 @@
       font-size: clamp(28px, 4vw, 48px);
       line-height: 1.05;
       letter-spacing: -0.04em;
-      max-width: 700px;
+      max-width: 760px;
     }
 
     .sub {
       margin-top: 12px;
       color: var(--muted);
       font-size: clamp(14px, 1.7vw, 18px);
-      max-width: 720px;
+      max-width: 760px;
       line-height: 1.5;
     }
 
@@ -97,26 +92,21 @@
 
     .scene {
       position: absolute;
-      inset: 120px 24px 24px 24px;
+      inset: 142px 24px 24px 24px;
     }
 
     .node {
       position: absolute;
+      width: 20%;
       min-width: 150px;
-      padding: 18px 22px;
+      padding: 16px 18px;
       border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
       box-shadow: 0 10px 30px rgba(0,0,0,0.18);
       text-align: center;
-      transition:
-        transform 1.2s cubic-bezier(.2,.8,.2,1),
-        left 1.2s cubic-bezier(.2,.8,.2,1),
-        top 1.2s cubic-bezier(.2,.8,.2,1),
-        opacity 0.8s ease,
-        border-color 0.6s ease,
-        background 0.6s ease;
-      z-index: 3;
+      z-index: 4;
+      transition: all 0.9s cubic-bezier(.2,.8,.2,1);
     }
 
     .node strong {
@@ -130,78 +120,73 @@
       margin-top: 6px;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.35;
+      line-height: 1.3;
     }
 
-    .node.input { left: 8%; top: 42%; }
-    .node.decision { left: 40%; top: 42%; border-color: rgba(125,211,252,0.35); }
-    .node.output { left: 72%; top: 42%; }
+    .input { left: 6%; top: 46%; }
+    .decision { left: 38%; top: 46%; border-color: rgba(125,211,252,0.42); }
+    .output { left: 70%; top: 46%; }
 
-    .arrow {
+    .context,
+    .outcomes {
+      opacity: 0;
+      transform: translateY(8px) scale(0.96);
+    }
+
+    .context {
+      left: 39%;
+      top: 16%;
+      border-color: rgba(167,139,250,0.40);
+    }
+
+    .outcomes {
+      left: 67%;
+      top: 70%;
+      border-color: rgba(52,211,153,0.40);
+    }
+
+    .flow-layer {
       position: absolute;
-      height: 3px;
-      background: linear-gradient(90deg, rgba(125,211,252,0.15), var(--accent), rgba(125,211,252,0.15));
-      border-radius: 999px;
-      transform-origin: left center;
-      overflow: visible;
-      opacity: 0.95;
-      transition: all 1.2s cubic-bezier(.2,.8,.2,1);
+      inset: 0;
+      width: 100%;
+      height: 100%;
       z-index: 2;
+      pointer-events: none;
     }
 
-    .arrow::after {
-      content: "";
-      position: absolute;
-      right: -2px;
-      top: 50%;
-      width: 12px;
-      height: 12px;
-      border-top: 3px solid var(--accent);
-      border-right: 3px solid var(--accent);
-      transform: translateY(-50%) rotate(45deg);
-      border-radius: 1px;
+    .flow {
+      fill: none;
+      stroke-linecap: round;
+      stroke-width: 0.65;
+      opacity: 0.9;
+      transition: opacity 0.7s ease;
     }
 
-    .arrow .pulse {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      width: 16px;
-      height: 16px;
-      background: radial-gradient(circle, white 0%, var(--accent) 45%, rgba(125,211,252,0) 70%);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      animation: travel-x 5s linear infinite;
-      filter: drop-shadow(0 0 10px rgba(125,211,252,0.8));
+    .flow-main {
+      stroke: var(--accent);
+      stroke-dasharray: 4 7;
+      animation: dashMove 2.6s linear infinite;
     }
 
-    @keyframes travel-x {
-      from { left: 0%; }
-      to { left: 100%; }
+    .flow-context {
+      stroke: var(--accent-2);
+      opacity: 0;
     }
 
-    .a1 { left: 24%; top: 50.5%; width: 16%; }
-    .a2 { left: 56%; top: 50.5%; width: 16%; }
-
-    .caption {
-      position: absolute;
-      left: 50%;
-      bottom: 16px;
-      transform: translateX(-50%);
-      padding: 14px 18px;
-      border-radius: 14px;
-      background: rgba(8, 12, 24, 0.7);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: clamp(14px, 1.6vw, 18px);
-      letter-spacing: -0.02em;
-      backdrop-filter: blur(10px);
-      z-index: 6;
-      transition: opacity 0.6s ease, transform 0.6s ease;
+    .flow-outcomes {
+      stroke: var(--accent-3);
+      opacity: 0;
     }
 
-    .caption strong {
-      color: white;
+    .flow-feedback {
+      stroke: var(--accent-3);
+      opacity: 0;
+      stroke-dasharray: 4 8;
+      animation: dashMove 3.2s linear infinite;
+    }
+
+    @keyframes dashMove {
+      to { stroke-dashoffset: -22; }
     }
 
     .noise {
@@ -210,141 +195,41 @@
       pointer-events: none;
       z-index: 1;
       opacity: 0;
-      transition: opacity 0.35s ease;
+      transition: opacity 0.45s ease;
     }
 
     .noise-dot {
       position: absolute;
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 999px;
       background: var(--warning);
-      box-shadow: 0 0 18px rgba(245, 158, 11, 0.7);
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.7);
       opacity: 0;
-      transform: scale(0.2);
-      transition: opacity 0.4s ease, transform 0.4s ease;
+      transform: scale(0.3);
+      transition: all 0.4s ease;
     }
 
-    .noise-dot:nth-child(1) { left: 32%; top: 28%; }
-    .noise-dot:nth-child(2) { left: 52%; top: 26%; }
+    .noise-dot:nth-child(1) { left: 30%; top: 30%; }
+    .noise-dot:nth-child(2) { left: 51%; top: 25%; }
     .noise-dot:nth-child(3) { left: 60%; top: 68%; }
-    .noise-dot:nth-child(4) { left: 28%; top: 64%; }
-
-    .context,
-    .outcomes {
-      position: absolute;
-      width: 170px;
-      padding: 15px 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-      text-align: center;
-      opacity: 0;
-      transform: scale(0.92);
-      transition: all 0.9s cubic-bezier(.2,.8,.2,1);
-      z-index: 3;
-    }
-
-    .context strong,
-    .outcomes strong {
-      display: block;
-      font-size: 17px;
-      letter-spacing: -0.02em;
-    }
-
-    .context span,
-    .outcomes span {
-      display: block;
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .context {
-      left: 40%;
-      top: 17%;
-      border-color: rgba(167,139,250,0.30);
-    }
-
-    .outcomes {
-      left: 64%;
-      top: 57%;
-      border-color: rgba(52,211,153,0.30);
-    }
-
-    .v-arrow,
-    .diag-arrow {
-      position: absolute;
-      height: 3px;
-      background: linear-gradient(90deg, rgba(167,139,250,0.15), var(--accent-2), rgba(167,139,250,0.15));
-      border-radius: 999px;
-      opacity: 0;
-      transform-origin: left center;
-      transition: opacity 0.8s ease, transform 1.2s cubic-bezier(.2,.8,.2,1), width 1.2s cubic-bezier(.2,.8,.2,1), left 1.2s cubic-bezier(.2,.8,.2,1), top 1.2s cubic-bezier(.2,.8,.2,1);
-      z-index: 2;
-    }
-
-    .v-arrow::after,
-    .diag-arrow::after {
-      content: "";
-      position: absolute;
-      right: -2px;
-      top: 50%;
-      width: 12px;
-      height: 12px;
-      border-top: 3px solid currentColor;
-      border-right: 3px solid currentColor;
-      transform: translateY(-50%) rotate(45deg);
-      border-radius: 1px;
-      color: inherit;
-    }
-
-    .context-arrow {
-      color: var(--accent-2);
-      left: 48.2%;
-      top: 31%;
-      width: 9%;
-      transform: rotate(90deg) scaleX(0.72);
-    }
-
-    .outcomes-arrow {
-      color: var(--accent-3);
-      left: 77.5%;
-      top: 50%;
-      width: 8%;
-      background: linear-gradient(90deg, rgba(52,211,153,0.15), var(--accent-3), rgba(52,211,153,0.15));
-      transform: rotate(110deg) scaleX(0.72);
-    }
-
-    .feedback-arrow {
-      color: var(--accent-3);
-      background: linear-gradient(90deg, rgba(52,211,153,0.15), var(--accent-3), rgba(52,211,153,0.15));
-      left: 66%;
-      top: 63%;
-      width: 11%;
-      transform: rotate(-146deg) scaleX(0.72);
-    }
-
-    .feedback-arrow::after {
-      color: var(--accent-3);
-    }
+    .noise-dot:nth-child(4) { left: 28%; top: 66%; }
 
     .final-text {
       position: absolute;
-      right: 28px;
-      top: 138px;
-      width: 290px;
-      padding: 20px 22px;
-      border-radius: 20px;
-      background: rgba(10, 14, 28, 0.72);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(10px);
+      right: 26px;
+      top: 16px;
+      width: 300px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: rgba(10, 14, 28, 0.74);
+      border: 1px solid rgba(255,255,255,0.1);
       box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-      opacity: 0;
-      transform: translateY(12px);
-      transition: all 0.8s ease;
+      backdrop-filter: blur(8px);
       z-index: 6;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.8s ease;
     }
 
     .final-text .small {
@@ -353,100 +238,92 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .final-text .big {
-      font-size: 26px;
-      line-height: 1.1;
+      font-size: 34px;
+      line-height: 1.03;
       letter-spacing: -0.04em;
       font-weight: 800;
     }
 
-    .final-text .big span {
-      color: var(--accent);
-    }
+    .final-text .big span { color: var(--accent); }
 
-    .glow {
+    .caption {
       position: absolute;
-      inset: auto;
-      width: 280px;
-      height: 280px;
-      background: radial-gradient(circle, rgba(125,211,252,0.14), rgba(125,211,252,0) 68%);
-      border-radius: 50%;
-      left: 34%;
-      top: 28%;
-      pointer-events: none;
-      filter: blur(18px);
-      opacity: 0.65;
-      transition: all 1.2s ease;
-      z-index: 0;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      width: min(92%, 860px);
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(8, 12, 24, 0.72);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+      font-size: clamp(14px, 1.6vw, 19px);
+      text-align: center;
+      letter-spacing: -0.015em;
+      backdrop-filter: blur(10px);
+      z-index: 7;
+      transition: opacity 0.5s ease;
     }
 
-    .phase-1 .caption { opacity: 1; }
+    .caption strong { color: white; }
+
+    .phase-2 .noise {
+      opacity: 1;
+    }
+
     .phase-2 .noise-dot {
       opacity: 1;
       transform: scale(1);
       animation: blink 1s ease-in-out infinite alternate;
     }
 
-    .phase-2 .noise {
-      opacity: 1;
+    .phase-2 .decision {
+      border-color: rgba(245,158,11,0.48);
     }
-
-    .phase-2 .a1 .pulse,
-    .phase-2 .a2 .pulse {
-      animation-duration: 5.6s;
-      filter: drop-shadow(0 0 6px rgba(245,158,11,0.65));
-    }
-
-    .phase-2 .node.decision {
-      border-color: rgba(245,158,11,0.45);
-    }
-
-    .phase-3 .node.input { left: 11%; top: 42%; }
-    .phase-3 .node.decision {
-      left: 40%;
-      top: 42%;
-      border-color: rgba(125,211,252,0.55);
-      background: linear-gradient(180deg, rgba(125,211,252,0.12), rgba(255,255,255,0.03));
-    }
-    .phase-3 .node.output { left: 69%; top: 42%; }
 
     .phase-3 .context,
     .phase-3 .outcomes,
-    .phase-3 .final-text {
+    .phase-4 .context,
+    .phase-4 .outcomes {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(0) scale(1);
     }
 
-    .phase-3 .context-arrow {
-      opacity: 1;
-      transform: rotate(90deg) scaleX(0.86);
+    .phase-3 .flow-context,
+    .phase-3 .flow-outcomes,
+    .phase-4 .flow-context,
+    .phase-4 .flow-outcomes {
+      opacity: 0.96;
     }
 
-    .phase-3 .outcomes-arrow {
-      opacity: 1;
-      transform: rotate(110deg) scaleX(0.88);
+    .phase-4 .flow-feedback {
+      opacity: 0.96;
     }
 
-    .phase-3 .feedback-arrow {
-      opacity: 1;
-      transform: rotate(-146deg) scaleX(0.9);
+    .phase-4 .decision {
+      border-color: rgba(125,211,252,0.60);
+      background: linear-gradient(180deg, rgba(125,211,252,0.12), rgba(255,255,255,0.03));
     }
 
-    .phase-3 .noise {
+    .phase-4 .final-text {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .phase-3 .noise,
+    .phase-4 .noise {
       opacity: 0;
     }
 
-    .phase-3 .noise-dot {
+    .phase-3 .noise-dot,
+    .phase-4 .noise-dot {
       opacity: 0;
-      transform: scale(0.2);
+      transform: scale(0.3);
       animation: none;
-    }
-
-    .phase-3 .caption {
-      transform: translateX(-50%) translateY(-2px);
     }
 
     @keyframes blink {
@@ -454,50 +331,17 @@
       to { opacity: 1; }
     }
 
-    .credit {
-      position: absolute;
-      left: 32px;
-      bottom: 86px;
-      color: rgba(255,255,255,0.35);
-      font-size: 12px;
-      z-index: 5;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    @media (max-width: 900px) {
-      .frame {
-        height: 700px;
-      }
-
-      .scene {
-        inset: 150px 16px 16px 16px;
-      }
-
-      .node {
-        min-width: 120px;
-        padding: 14px 16px;
-      }
-
-      .node strong {
-        font-size: 16px;
-      }
-
+    @media (max-width: 980px) {
+      .scene { inset: 160px 14px 14px 14px; }
+      .node { min-width: 126px; padding: 14px 14px; }
+      .node strong { font-size: 16px; }
+      .node span { font-size: 12px; }
       .final-text {
-        right: 16px;
-        top: 100px;
-        width: 240px;
+        width: 230px;
+        top: 8px;
+        right: 8px;
       }
-
-      .outcomes {
-        left: 61%;
-        top: 51%;
-        width: 158px;
-      }
-
-      .caption {
-        bottom: 10px;
-      }
+      .final-text .big { font-size: 26px; }
     }
   </style>
 </head>
@@ -514,16 +358,31 @@
       <div class="badge">Auto-looping animation</div>
     </div>
 
-    <div class="glow"></div>
-
     <div class="scene">
+      <svg class="flow-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#7dd3fc"></path>
+          </marker>
+          <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#a78bfa"></path>
+          </marker>
+          <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#34d399"></path>
+          </marker>
+        </defs>
+
+        <path class="flow flow-main" d="M26 56 L36 56" marker-end="url(#arrow-blue)"></path>
+        <path class="flow flow-main" d="M58 56 L68 56" marker-end="url(#arrow-blue)"></path>
+
+        <path class="flow flow-context" d="M48 34 L48 44" marker-end="url(#arrow-purple)"></path>
+        <path class="flow flow-outcomes" d="M80 63 L80 69" marker-end="url(#arrow-green)"></path>
+        <path class="flow flow-feedback" d="M68 78 C62 78, 58 72, 55 64" marker-end="url(#arrow-green)"></path>
+      </svg>
+
       <div class="node input">
         <strong>Inputs</strong>
         <span>Signals entering the system</span>
-      </div>
-
-      <div class="arrow a1">
-        <div class="pulse"></div>
       </div>
 
       <div class="node decision">
@@ -531,13 +390,19 @@
         <span>Static logic or decision layer</span>
       </div>
 
-      <div class="arrow a2">
-        <div class="pulse"></div>
-      </div>
-
       <div class="node output">
         <strong>Outputs</strong>
         <span>Actions, responses, results</span>
+      </div>
+
+      <div class="node context">
+        <strong>Context</strong>
+        <span>Conditions shift around the system</span>
+      </div>
+
+      <div class="node outcomes">
+        <strong>Outcomes</strong>
+        <span>What actually happened in the real world</span>
       </div>
 
       <div class="noise">
@@ -547,28 +412,11 @@
         <div class="noise-dot"></div>
       </div>
 
-      <div class="context">
-        <strong>Context</strong>
-        <span>Conditions shift around the system</span>
-      </div>
-
-      <div class="outcomes">
-        <strong>Outcomes</strong>
-        <span>What actually happened in the real world</span>
-      </div>
-
-      <div class="v-arrow context-arrow"></div>
-      <div class="v-arrow outcomes-arrow"></div>
-
-      <div class="diag-arrow feedback-arrow"></div>
-
       <div class="final-text">
         <div class="small">Key shift</div>
         <div class="big">From static decisions to <span>adaptive systems</span></div>
       </div>
     </div>
-
-    <div class="credit">Concept animation for LinkedIn</div>
 
     <div class="caption" id="caption">
       <strong>Most systems are designed to produce consistent outputs from known inputs.</strong>
@@ -583,17 +431,22 @@
       {
         className: "phase-1",
         caption: "<strong>Most systems are designed to produce consistent outputs from known inputs.</strong>",
-        duration: 6200
+        duration: 5200
       },
       {
         className: "phase-2",
-        caption: "<strong>But real-world conditions do not stay constant.</strong> Inputs change. Context shifts. Outcomes vary.",
-        duration: 7600
+        caption: "<strong>But real-world conditions don&rsquo;t stay constant.</strong>",
+        duration: 4400
       },
       {
         className: "phase-3",
-        caption: "<strong>The systems that perform well are not just executing decisions.</strong> They are adjusting over time.",
-        duration: 9800
+        caption: "<strong>Inputs change. Context shifts. Outcomes vary.</strong>",
+        duration: 5400
+      },
+      {
+        className: "phase-4",
+        caption: "<strong>The systems that perform well aren&rsquo;t just executing decisions. They&rsquo;re adjusting over time.</strong> From static decisions &rarr; adaptive systems.",
+        duration: 7800
       }
     ];
 
@@ -606,7 +459,6 @@
 
     function loopPhases() {
       applyPhase(index);
-
       setTimeout(() => {
         index = (index + 1) % phases.length;
         loopPhases();
