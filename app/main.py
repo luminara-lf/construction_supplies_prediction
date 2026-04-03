@@ -90,9 +90,9 @@ def create_app(seed_demo: bool = True) -> FastAPI:
             .all()
         )
         return templates.TemplateResponse(
-            "dashboard.html",
-            {
-                "request": request,
+            request=request,
+            name="dashboard.html",
+            context={
                 "counts": counts,
                 "rows": table,
                 "connectors": connectors,
@@ -112,7 +112,11 @@ def create_app(seed_demo: bool = True) -> FastAPI:
             .limit(100)
             .all()
         )
-        return templates.TemplateResponse("alerts.html", {"request": request, "alerts": alerts})
+        return templates.TemplateResponse(
+            request=request,
+            name="alerts.html",
+            context={"alerts": alerts},
+        )
 
     @app.get("/orders/{order_id}", response_class=HTMLResponse)
     def order_detail_page(
@@ -128,8 +132,9 @@ def create_app(seed_demo: bool = True) -> FastAPI:
         )
         if not order_line:
             return templates.TemplateResponse(
-                "order_detail.html",
-                {"request": request, "order": None, "risk_history": [], "alerts": []},
+                request=request,
+                name="order_detail.html",
+                context={"order": None, "risk_history": [], "alerts": []},
                 status_code=404,
             )
         risks = (
@@ -145,8 +150,9 @@ def create_app(seed_demo: bool = True) -> FastAPI:
             .all()
         )
         return templates.TemplateResponse(
-            "order_detail.html",
-            {"request": request, "order": order_line, "risk_history": risks, "alerts": alerts},
+            request=request,
+            name="order_detail.html",
+            context={"order": order_line, "risk_history": risks, "alerts": alerts},
         )
 
     @app.get("/integrations", response_class=HTMLResponse)
@@ -161,7 +167,11 @@ def create_app(seed_demo: bool = True) -> FastAPI:
             .order_by(models.SupplierConnector.created_at.desc())
             .all()
         )
-        return templates.TemplateResponse("integrations.html", {"request": request, "connectors": connectors})
+        return templates.TemplateResponse(
+            request=request,
+            name="integrations.html",
+            context={"connectors": connectors},
+        )
 
     @app.get("/settings/notifications", response_class=HTMLResponse)
     def notification_settings_page(
@@ -178,8 +188,9 @@ def create_app(seed_demo: bool = True) -> FastAPI:
         if user:
             prefs = user.notification_preferences
         return templates.TemplateResponse(
-            "settings_notifications.html",
-            {"request": request, "notification_preferences": prefs},
+            request=request,
+            name="settings_notifications.html",
+            context={"notification_preferences": prefs},
         )
 
     return app
