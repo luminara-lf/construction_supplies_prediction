@@ -157,32 +157,61 @@
     .flow {
       fill: none;
       stroke-linecap: round;
-      stroke-width: 0.65;
-      opacity: 0.9;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
       transition: opacity 0.7s ease;
     }
 
-    .flow-main {
-      stroke: var(--accent);
-      stroke-dasharray: 4 7;
-      animation: dashMove 2.6s linear infinite;
+    .flow-trail {
+      stroke-width: 1.35;
+      opacity: 0.18;
+      filter: url(#softGlow);
     }
 
-    .flow-context {
-      stroke: var(--accent-2);
-      opacity: 0;
-    }
-
-    .flow-outcomes {
-      stroke: var(--accent-3);
-      opacity: 0;
-    }
-
-    .flow-feedback {
-      stroke: var(--accent-3);
-      opacity: 0;
-      stroke-dasharray: 4 8;
+    .flow-core {
+      stroke-width: 0.56;
+      stroke-dasharray: 2 5;
       animation: dashMove 3.2s linear infinite;
+      opacity: 0.9;
+    }
+
+    .flow-main-trail,
+    .flow-main-core {
+      stroke: url(#grad-blue);
+    }
+
+    .flow-context-trail,
+    .flow-context-core {
+      stroke: url(#grad-purple);
+      opacity: 0;
+    }
+
+    .flow-outcomes-trail,
+    .flow-outcomes-core {
+      stroke: url(#grad-green);
+      opacity: 0;
+    }
+
+    .flow-feedback-trail,
+    .flow-feedback-core {
+      stroke: url(#grad-green);
+      opacity: 0;
+      animation-duration: 4s;
+    }
+
+    .packet {
+      opacity: 0.85;
+      filter: url(#softGlow);
+    }
+
+    .packet-blue { fill: #9ee7ff; }
+    .packet-purple { fill: #cab8ff; opacity: 0; }
+    .packet-green { fill: #7cf7c8; opacity: 0; }
+
+    .context-flow,
+    .outcomes-flow,
+    .feedback-flow {
+      opacity: 0;
     }
 
     @keyframes dashMove {
@@ -293,15 +322,22 @@
       transform: translateY(0) scale(1);
     }
 
-    .phase-3 .flow-context,
-    .phase-3 .flow-outcomes,
-    .phase-4 .flow-context,
-    .phase-4 .flow-outcomes {
+    .phase-3 .context-flow,
+    .phase-3 .outcomes-flow,
+    .phase-4 .context-flow,
+    .phase-4 .outcomes-flow {
       opacity: 0.96;
     }
 
-    .phase-4 .flow-feedback {
+    .phase-4 .feedback-flow {
       opacity: 0.96;
+    }
+
+    .phase-3 .packet-purple,
+    .phase-3 .packet-green,
+    .phase-4 .packet-purple,
+    .phase-4 .packet-green {
+      opacity: 0.88;
     }
 
     .phase-4 .decision {
@@ -361,23 +397,80 @@
     <div class="scene">
       <svg class="flow-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <defs>
-          <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#7dd3fc"></path>
+          <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#57d4ff" stop-opacity="0.25"></stop>
+            <stop offset="50%" stop-color="#93e8ff" stop-opacity="1"></stop>
+            <stop offset="100%" stop-color="#57d4ff" stop-opacity="0.25"></stop>
+          </linearGradient>
+          <linearGradient id="grad-purple" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#9f85ff" stop-opacity="0.25"></stop>
+            <stop offset="50%" stop-color="#ccb9ff" stop-opacity="1"></stop>
+            <stop offset="100%" stop-color="#9f85ff" stop-opacity="0.25"></stop>
+          </linearGradient>
+          <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4de9b0" stop-opacity="0.25"></stop>
+            <stop offset="50%" stop-color="#88f8cf" stop-opacity="1"></stop>
+            <stop offset="100%" stop-color="#4de9b0" stop-opacity="0.25"></stop>
+          </linearGradient>
+          <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.1" result="blur"></feGaussianBlur>
+            <feMerge>
+              <feMergeNode in="blur"></feMergeNode>
+              <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+          </filter>
+
+          <marker id="arrow-blue" viewBox="0 0 8 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M1 1 L7 5 L1 9" fill="none" stroke="#8de8ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
           </marker>
-          <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#a78bfa"></path>
+          <marker id="arrow-purple" viewBox="0 0 8 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M1 1 L7 5 L1 9" fill="none" stroke="#cab8ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
           </marker>
-          <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#34d399"></path>
+          <marker id="arrow-green" viewBox="0 0 8 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M1 1 L7 5 L1 9" fill="none" stroke="#82f6c9" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
           </marker>
         </defs>
 
-        <path class="flow flow-main" d="M26 56 L36 56" marker-end="url(#arrow-blue)"></path>
-        <path class="flow flow-main" d="M58 56 L68 56" marker-end="url(#arrow-blue)"></path>
+        <path id="p-main-1" class="flow flow-trail flow-main-trail" d="M26 56 L36 56"></path>
+        <path class="flow flow-core flow-main-core" d="M26 56 L36 56" marker-end="url(#arrow-blue)"></path>
 
-        <path class="flow flow-context" d="M48 34 L48 44" marker-end="url(#arrow-purple)"></path>
-        <path class="flow flow-outcomes" d="M80 63 L80 69" marker-end="url(#arrow-green)"></path>
-        <path class="flow flow-feedback" d="M68 78 C62 78, 58 72, 55 64" marker-end="url(#arrow-green)"></path>
+        <path id="p-main-2" class="flow flow-trail flow-main-trail" d="M58 56 L68 56"></path>
+        <path class="flow flow-core flow-main-core" d="M58 56 L68 56" marker-end="url(#arrow-blue)"></path>
+
+        <path id="p-context" class="flow flow-trail flow-context-trail context-flow" d="M48 34 L48 44"></path>
+        <path class="flow flow-core flow-context-core context-flow" d="M48 34 L48 44" marker-end="url(#arrow-purple)"></path>
+
+        <path id="p-outcomes" class="flow flow-trail flow-outcomes-trail outcomes-flow" d="M80 63 L80 69"></path>
+        <path class="flow flow-core flow-outcomes-core outcomes-flow" d="M80 63 L80 69" marker-end="url(#arrow-green)"></path>
+
+        <path id="p-feedback" class="flow flow-trail flow-feedback-trail feedback-flow" d="M68 78 C62 78, 58 72, 55 64"></path>
+        <path class="flow flow-core flow-feedback-core feedback-flow" d="M68 78 C62 78, 58 72, 55 64" marker-end="url(#arrow-green)"></path>
+
+        <circle class="packet packet-blue" r="0.55">
+          <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#p-main-1"></mpath>
+          </animateMotion>
+        </circle>
+        <circle class="packet packet-blue" r="0.55">
+          <animateMotion dur="4.2s" begin="1.6s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#p-main-2"></mpath>
+          </animateMotion>
+        </circle>
+        <circle class="packet packet-purple" r="0.55">
+          <animateMotion dur="3.4s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#p-context"></mpath>
+          </animateMotion>
+        </circle>
+        <circle class="packet packet-green" r="0.55">
+          <animateMotion dur="3.6s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#p-outcomes"></mpath>
+          </animateMotion>
+        </circle>
+        <circle class="packet packet-green" r="0.55">
+          <animateMotion dur="4.6s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#p-feedback"></mpath>
+          </animateMotion>
+        </circle>
       </svg>
 
       <div class="node input">
