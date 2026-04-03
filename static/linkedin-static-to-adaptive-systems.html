@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Static Decisions - Adaptive Systems</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121933;
+      --text: #e8ecf8;
+      --muted: #9aa6c3;
+      --accent: #7dd3fc;
+      --accent-2: #a78bfa;
+      --accent-3: #34d399;
+      --warning: #f59e0b;
+      --danger: #fb7185;
+      --line: rgba(255,255,255,0.14);
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(125, 211, 252, 0.08), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.10), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .frame {
+      width: min(1100px, 92vw);
+      height: min(640px, 88vh);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      padding: 28px 30px;
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      max-width: 700px;
+    }
+
+    .sub {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: clamp(14px, 1.7vw, 18px);
+      max-width: 720px;
+      line-height: 1.5;
+    }
+
+    .badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 120px 24px 24px 24px;
+    }
+
+    .node {
+      position: absolute;
+      min-width: 150px;
+      padding: 18px 22px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      text-align: center;
+      transition:
+        transform 1.2s cubic-bezier(.2,.8,.2,1),
+        left 1.2s cubic-bezier(.2,.8,.2,1),
+        top 1.2s cubic-bezier(.2,.8,.2,1),
+        opacity 0.8s ease,
+        border-color 0.6s ease,
+        background 0.6s ease;
+      z-index: 3;
+    }
+
+    .node strong {
+      display: block;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .node span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .node.input { left: 8%; top: 42%; }
+    .node.decision { left: 40%; top: 42%; border-color: rgba(125,211,252,0.35); }
+    .node.output { left: 72%; top: 42%; }
+
+    .arrow {
+      position: absolute;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(125,211,252,0.15), var(--accent), rgba(125,211,252,0.15));
+      border-radius: 999px;
+      transform-origin: left center;
+      overflow: visible;
+      opacity: 0.95;
+      transition: all 1.2s cubic-bezier(.2,.8,.2,1);
+      z-index: 2;
+    }
+
+    .arrow::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      border-top: 3px solid var(--accent);
+      border-right: 3px solid var(--accent);
+      transform: translateY(-50%) rotate(45deg);
+      border-radius: 1px;
+    }
+
+    .arrow .pulse {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 16px;
+      height: 16px;
+      background: radial-gradient(circle, white 0%, var(--accent) 45%, rgba(125,211,252,0) 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: travel-x 2.2s linear infinite;
+      filter: drop-shadow(0 0 10px rgba(125,211,252,0.8));
+    }
+
+    @keyframes travel-x {
+      from { left: 0%; }
+      to { left: 100%; }
+    }
+
+    .a1 { left: 24%; top: 50.5%; width: 16%; }
+    .a2 { left: 56%; top: 50.5%; width: 16%; }
+
+    .caption {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: rgba(8, 12, 24, 0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: clamp(15px, 1.8vw, 20px);
+      letter-spacing: -0.02em;
+      backdrop-filter: blur(10px);
+      z-index: 6;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .caption strong {
+      color: white;
+    }
+
+    .noise {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .noise-dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--warning);
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.7);
+      opacity: 0;
+      transform: scale(0.2);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .noise-dot:nth-child(1) { left: 32%; top: 28%; }
+    .noise-dot:nth-child(2) { left: 52%; top: 26%; }
+    .noise-dot:nth-child(3) { left: 60%; top: 68%; }
+    .noise-dot:nth-child(4) { left: 28%; top: 64%; }
+
+    .context,
+    .outcomes {
+      position: absolute;
+      width: 170px;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      text-align: center;
+      opacity: 0;
+      transform: scale(0.92);
+      transition: all 0.9s cubic-bezier(.2,.8,.2,1);
+      z-index: 3;
+    }
+
+    .context strong,
+    .outcomes strong {
+      display: block;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .context span,
+    .outcomes span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .context {
+      left: 40%;
+      top: 17%;
+      border-color: rgba(167,139,250,0.30);
+    }
+
+    .outcomes {
+      left: 40%;
+      top: 67%;
+      border-color: rgba(52,211,153,0.30);
+    }
+
+    .v-arrow,
+    .diag-arrow {
+      position: absolute;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(167,139,250,0.15), var(--accent-2), rgba(167,139,250,0.15));
+      border-radius: 999px;
+      opacity: 0;
+      transform-origin: left center;
+      transition: opacity 0.8s ease, transform 1.2s cubic-bezier(.2,.8,.2,1), width 1.2s cubic-bezier(.2,.8,.2,1), left 1.2s cubic-bezier(.2,.8,.2,1), top 1.2s cubic-bezier(.2,.8,.2,1);
+      z-index: 2;
+    }
+
+    .v-arrow::after,
+    .diag-arrow::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      border-top: 3px solid currentColor;
+      border-right: 3px solid currentColor;
+      transform: translateY(-50%) rotate(45deg);
+      border-radius: 1px;
+      color: inherit;
+    }
+
+    .context-arrow {
+      color: var(--accent-2);
+      left: 50.5%;
+      top: 31%;
+      width: 15%;
+      transform: rotate(90deg) scaleX(0.8);
+    }
+
+    .outcomes-arrow {
+      color: var(--accent-3);
+      left: 50.5%;
+      top: 65%;
+      width: 15%;
+      background: linear-gradient(90deg, rgba(52,211,153,0.15), var(--accent-3), rgba(52,211,153,0.15));
+      transform: rotate(90deg) scaleX(0.8);
+    }
+
+    .loop-left,
+    .loop-right {
+      color: var(--accent-3);
+      background: linear-gradient(90deg, rgba(52,211,153,0.15), var(--accent-3), rgba(52,211,153,0.15));
+      width: 18%;
+    }
+
+    .loop-left {
+      left: 24%;
+      top: 62%;
+      transform: rotate(-28deg) scaleX(0.8);
+    }
+
+    .loop-right {
+      left: 57%;
+      top: 39%;
+      transform: rotate(152deg) scaleX(0.8);
+    }
+
+    .loop-left::after,
+    .loop-right::after {
+      color: var(--accent-3);
+    }
+
+    .final-text {
+      position: absolute;
+      right: 28px;
+      top: 138px;
+      width: 290px;
+      padding: 20px 22px;
+      border-radius: 20px;
+      background: rgba(10, 14, 28, 0.72);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.8s ease;
+      z-index: 6;
+    }
+
+    .final-text .small {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .final-text .big {
+      font-size: 26px;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    .final-text .big span {
+      color: var(--accent);
+    }
+
+    .glow {
+      position: absolute;
+      inset: auto;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(125,211,252,0.14), rgba(125,211,252,0) 68%);
+      border-radius: 50%;
+      left: 34%;
+      top: 28%;
+      pointer-events: none;
+      filter: blur(18px);
+      opacity: 0.65;
+      transition: all 1.2s ease;
+      z-index: 0;
+    }
+
+    .phase-1 .caption { opacity: 1; }
+    .phase-2 .noise-dot {
+      opacity: 1;
+      transform: scale(1);
+      animation: blink 1s ease-in-out infinite alternate;
+    }
+
+    .phase-2 .a1 .pulse,
+    .phase-2 .a2 .pulse {
+      animation-duration: 3.5s;
+      filter: drop-shadow(0 0 6px rgba(245,158,11,0.65));
+    }
+
+    .phase-2 .node.decision {
+      border-color: rgba(245,158,11,0.45);
+    }
+
+    .phase-3 .node.input { left: 11%; top: 42%; }
+    .phase-3 .node.decision {
+      left: 40%;
+      top: 42%;
+      border-color: rgba(125,211,252,0.55);
+      background: linear-gradient(180deg, rgba(125,211,252,0.12), rgba(255,255,255,0.03));
+    }
+    .phase-3 .node.output { left: 69%; top: 42%; }
+
+    .phase-3 .context,
+    .phase-3 .outcomes,
+    .phase-3 .final-text,
+    .phase-3 .context-arrow,
+    .phase-3 .outcomes-arrow,
+    .phase-3 .loop-left,
+    .phase-3 .loop-right {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .phase-3 .noise-dot {
+      opacity: 0.15;
+      transform: scale(0.7);
+      animation: none;
+    }
+
+    .phase-3 .caption {
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    @keyframes blink {
+      from { opacity: 0.35; }
+      to { opacity: 1; }
+    }
+
+    .credit {
+      position: absolute;
+      left: 32px;
+      bottom: 86px;
+      color: rgba(255,255,255,0.35);
+      font-size: 12px;
+      z-index: 5;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .frame {
+        height: 700px;
+      }
+
+      .scene {
+        inset: 150px 16px 16px 16px;
+      }
+
+      .node {
+        min-width: 120px;
+        padding: 14px 16px;
+      }
+
+      .node strong {
+        font-size: 16px;
+      }
+
+      .final-text {
+        right: 16px;
+        top: 100px;
+        width: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame phase-1" id="frame">
+    <div class="header">
+      <div>
+        <div class="eyebrow">Animated Systems View</div>
+        <h1>Static Decisions &rarr; Adaptive Systems</h1>
+        <div class="sub">
+          A simple visual for how systems evolve when they begin to adjust to changing inputs, context, and outcomes.
+        </div>
+      </div>
+      <div class="badge">Auto-looping animation</div>
+    </div>
+
+    <div class="glow"></div>
+
+    <div class="scene">
+      <div class="node input">
+        <strong>Inputs</strong>
+        <span>Signals entering the system</span>
+      </div>
+
+      <div class="arrow a1">
+        <div class="pulse"></div>
+      </div>
+
+      <div class="node decision">
+        <strong>Decision</strong>
+        <span>Static logic or decision layer</span>
+      </div>
+
+      <div class="arrow a2">
+        <div class="pulse"></div>
+      </div>
+
+      <div class="node output">
+        <strong>Outputs</strong>
+        <span>Actions, responses, results</span>
+      </div>
+
+      <div class="noise">
+        <div class="noise-dot"></div>
+        <div class="noise-dot"></div>
+        <div class="noise-dot"></div>
+        <div class="noise-dot"></div>
+      </div>
+
+      <div class="context">
+        <strong>Context</strong>
+        <span>Conditions shift around the system</span>
+      </div>
+
+      <div class="outcomes">
+        <strong>Outcomes</strong>
+        <span>What actually happened in the real world</span>
+      </div>
+
+      <div class="v-arrow context-arrow"></div>
+      <div class="v-arrow outcomes-arrow"></div>
+
+      <div class="diag-arrow loop-left"></div>
+      <div class="diag-arrow loop-right"></div>
+
+      <div class="final-text">
+        <div class="small">Key shift</div>
+        <div class="big">From static decisions to <span>adaptive systems</span></div>
+      </div>
+    </div>
+
+    <div class="credit">Concept animation for LinkedIn</div>
+
+    <div class="caption" id="caption">
+      <strong>Most systems are designed like this:</strong> Input &rarr; Decision &rarr; Output
+    </div>
+  </div>
+
+  <script>
+    const frame = document.getElementById("frame");
+    const caption = document.getElementById("caption");
+
+    const phases = [
+      {
+        className: "phase-1",
+        caption: "<strong>Most systems are designed like this:</strong> Input &rarr; Decision &rarr; Output",
+        duration: 2200
+      },
+      {
+        className: "phase-2",
+        caption: "<strong>But conditions do not stay constant.</strong> Inputs shift. Context changes. Outcomes vary.",
+        duration: 2200
+      },
+      {
+        className: "phase-3",
+        caption: "<strong>Real systems adjust.</strong> They respond to context and learn from outcomes.",
+        duration: 3200
+      }
+    ];
+
+    let index = 0;
+
+    function applyPhase(i) {
+      frame.className = `frame ${phases[i].className}`;
+      caption.innerHTML = phases[i].caption;
+    }
+
+    function loopPhases() {
+      applyPhase(index);
+
+      setTimeout(() => {
+        index = (index + 1) % phases.length;
+        loopPhases();
+      }, phases[index].duration);
+    }
+
+    loopPhases();
+  </script>
+</body>
+</html>
