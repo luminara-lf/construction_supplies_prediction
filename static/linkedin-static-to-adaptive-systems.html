@@ -163,16 +163,16 @@
     }
 
     .flow-trail {
-      stroke-width: 1.35;
-      opacity: 0.18;
+      stroke-width: 2.3;
+      opacity: 0.44;
       filter: url(#softGlow);
     }
 
     .flow-core {
-      stroke-width: 0.56;
-      stroke-dasharray: 2 5;
-      animation: dashMove 3.2s linear infinite;
-      opacity: 0.9;
+      stroke-width: 1.05;
+      stroke-dasharray: 4 7;
+      animation: dashMove 3.8s linear infinite;
+      opacity: 1;
     }
 
     .flow-main-trail,
@@ -199,15 +199,6 @@
       animation-duration: 4s;
     }
 
-    .packet {
-      opacity: 0.85;
-      filter: url(#softGlow);
-    }
-
-    .packet-blue { fill: #9ee7ff; }
-    .packet-purple { fill: #cab8ff; opacity: 0; }
-    .packet-green { fill: #7cf7c8; opacity: 0; }
-
     .context-flow,
     .outcomes-flow,
     .feedback-flow {
@@ -218,37 +209,11 @@
       to { stroke-dashoffset: -22; }
     }
 
-    .noise {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0;
-      transition: opacity 0.45s ease;
-    }
-
-    .noise-dot {
-      position: absolute;
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: var(--warning);
-      box-shadow: 0 0 16px rgba(245, 158, 11, 0.7);
-      opacity: 0;
-      transform: scale(0.3);
-      transition: all 0.4s ease;
-    }
-
-    .noise-dot:nth-child(1) { left: 30%; top: 30%; }
-    .noise-dot:nth-child(2) { left: 51%; top: 25%; }
-    .noise-dot:nth-child(3) { left: 60%; top: 68%; }
-    .noise-dot:nth-child(4) { left: 28%; top: 66%; }
-
     .final-text {
       position: absolute;
       right: 26px;
-      top: 16px;
-      width: 300px;
+      top: 2px;
+      width: 286px;
       padding: 18px 20px;
       border-radius: 18px;
       background: rgba(10, 14, 28, 0.74);
@@ -279,37 +244,6 @@
 
     .final-text .big span { color: var(--accent); }
 
-    .caption {
-      position: absolute;
-      left: 50%;
-      bottom: 16px;
-      transform: translateX(-50%);
-      width: min(92%, 860px);
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: rgba(8, 12, 24, 0.72);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: var(--text);
-      font-size: clamp(14px, 1.6vw, 19px);
-      text-align: center;
-      letter-spacing: -0.015em;
-      backdrop-filter: blur(10px);
-      z-index: 7;
-      transition: opacity 0.5s ease;
-    }
-
-    .caption strong { color: white; }
-
-    .phase-2 .noise {
-      opacity: 1;
-    }
-
-    .phase-2 .noise-dot {
-      opacity: 1;
-      transform: scale(1);
-      animation: blink 1s ease-in-out infinite alternate;
-    }
-
     .phase-2 .decision {
       border-color: rgba(245,158,11,0.48);
     }
@@ -333,13 +267,6 @@
       opacity: 0.96;
     }
 
-    .phase-3 .packet-purple,
-    .phase-3 .packet-green,
-    .phase-4 .packet-purple,
-    .phase-4 .packet-green {
-      opacity: 0.88;
-    }
-
     .phase-4 .decision {
       border-color: rgba(125,211,252,0.60);
       background: linear-gradient(180deg, rgba(125,211,252,0.12), rgba(255,255,255,0.03));
@@ -350,23 +277,6 @@
       transform: translateY(0);
     }
 
-    .phase-3 .noise,
-    .phase-4 .noise {
-      opacity: 0;
-    }
-
-    .phase-3 .noise-dot,
-    .phase-4 .noise-dot {
-      opacity: 0;
-      transform: scale(0.3);
-      animation: none;
-    }
-
-    @keyframes blink {
-      from { opacity: 0.35; }
-      to { opacity: 1; }
-    }
-
     @media (max-width: 980px) {
       .scene { inset: 160px 14px 14px 14px; }
       .node { min-width: 126px; padding: 14px 14px; }
@@ -374,7 +284,7 @@
       .node span { font-size: 12px; }
       .final-text {
         width: 230px;
-        top: 8px;
+        top: 2px;
         right: 8px;
       }
       .final-text .big { font-size: 26px; }
@@ -446,31 +356,6 @@
         <path id="p-feedback" class="flow flow-trail flow-feedback-trail feedback-flow" d="M68 78 C62 78, 58 72, 55 64"></path>
         <path class="flow flow-core flow-feedback-core feedback-flow" d="M68 78 C62 78, 58 72, 55 64" marker-end="url(#arrow-green)"></path>
 
-        <circle class="packet packet-blue" r="0.55">
-          <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#p-main-1"></mpath>
-          </animateMotion>
-        </circle>
-        <circle class="packet packet-blue" r="0.55">
-          <animateMotion dur="4.2s" begin="1.6s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#p-main-2"></mpath>
-          </animateMotion>
-        </circle>
-        <circle class="packet packet-purple" r="0.55">
-          <animateMotion dur="3.4s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#p-context"></mpath>
-          </animateMotion>
-        </circle>
-        <circle class="packet packet-green" r="0.55">
-          <animateMotion dur="3.6s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#p-outcomes"></mpath>
-          </animateMotion>
-        </circle>
-        <circle class="packet packet-green" r="0.55">
-          <animateMotion dur="4.6s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#p-feedback"></mpath>
-          </animateMotion>
-        </circle>
       </svg>
 
       <div class="node input">
@@ -498,56 +383,28 @@
         <span>What actually happened in the real world</span>
       </div>
 
-      <div class="noise">
-        <div class="noise-dot"></div>
-        <div class="noise-dot"></div>
-        <div class="noise-dot"></div>
-        <div class="noise-dot"></div>
-      </div>
-
       <div class="final-text">
         <div class="small">Key shift</div>
         <div class="big">From static decisions to <span>adaptive systems</span></div>
       </div>
     </div>
 
-    <div class="caption" id="caption">
-      <strong>Most systems are designed to produce consistent outputs from known inputs.</strong>
-    </div>
   </div>
 
   <script>
     const frame = document.getElementById("frame");
-    const caption = document.getElementById("caption");
 
     const phases = [
-      {
-        className: "phase-1",
-        caption: "<strong>Most systems are designed to produce consistent outputs from known inputs.</strong>",
-        duration: 5200
-      },
-      {
-        className: "phase-2",
-        caption: "<strong>But real-world conditions don&rsquo;t stay constant.</strong>",
-        duration: 4400
-      },
-      {
-        className: "phase-3",
-        caption: "<strong>Inputs change. Context shifts. Outcomes vary.</strong>",
-        duration: 5400
-      },
-      {
-        className: "phase-4",
-        caption: "<strong>The systems that perform well aren&rsquo;t just executing decisions. They&rsquo;re adjusting over time.</strong> From static decisions &rarr; adaptive systems.",
-        duration: 7800
-      }
+      { className: "phase-1", duration: 5200 },
+      { className: "phase-2", duration: 4400 },
+      { className: "phase-3", duration: 5400 },
+      { className: "phase-4", duration: 7800 }
     ];
 
     let index = 0;
 
     function applyPhase(i) {
       frame.className = `frame ${phases[i].className}`;
-      caption.innerHTML = phases[i].caption;
     }
 
     function loopPhases() {
