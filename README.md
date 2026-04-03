@@ -58,6 +58,17 @@ Additional helper endpoints:
 pytest
 ```
 
+## LinkedIn animation asset
+
+A standalone animation for the concept **"Static Decisions -> Adaptive Systems"** is available at:
+
+- `static/linkedin-static-to-adaptive-systems.html`
+
+Use either workflow:
+
+1. Open the file directly in your browser.
+2. Run the app and open: `http://localhost:8000/static/linkedin-static-to-adaptive-systems.html`
+
 ## Notes
 
 - Data ingestion currently uses deterministic mocked supplier payloads (`MetroLumber`, `BuildPro`) for repeatable MVP behavior.
