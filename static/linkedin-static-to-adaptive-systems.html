@@ -45,22 +45,8 @@
     }
 
     .header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 20px;
       position: relative;
       z-index: 5;
-    }
-
-    .eyebrow {
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      opacity: 0.9;
     }
 
     h1 {
@@ -77,17 +63,6 @@
       font-size: clamp(14px, 1.7vw, 18px);
       max-width: 760px;
       line-height: 1.5;
-    }
-
-    .badge {
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04);
-      color: var(--muted);
-      font-size: 13px;
-      white-space: nowrap;
-      align-self: flex-start;
     }
 
     .scene {
@@ -298,13 +273,11 @@
   <div class="frame phase-1" id="frame">
     <div class="header">
       <div>
-        <div class="eyebrow">Animated Systems View</div>
         <h1>Static Decisions &rarr; Adaptive Systems</h1>
         <div class="sub">
-          A simple visual for how systems evolve when they begin to adjust to changing inputs, context, and outcomes.
+          how systems evolve when they begin to adjust to changing inputs, context, and outcomes.
         </div>
       </div>
-      <div class="badge">Auto-looping animation</div>
     </div>
 
     <div class="scene">
